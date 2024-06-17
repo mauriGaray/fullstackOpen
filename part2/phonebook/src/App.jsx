@@ -9,9 +9,11 @@ const App = () => {
   const addName = (event) => {
     event.preventDefault();
     const nameObject = {
-      content: newName,
-      important: Math.random() < 0.5,
+      name: newName,
     };
+    if (persons.find((person) => person.name === nameObject.name)) {
+      return alert(`${newName} is already added to phonebook`);
+    }
     setPersons(persons.concat(nameObject));
     setNewName("");
   };
@@ -30,7 +32,7 @@ const App = () => {
 
       <h2>Numbers</h2>
       {persons.map((person) => {
-        return <div key={person.content}>{person.content}</div>;
+        return <div key={person.name}>{person.name}</div>;
       })}
     </div>
   );
