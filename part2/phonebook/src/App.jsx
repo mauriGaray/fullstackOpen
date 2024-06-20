@@ -27,9 +27,9 @@ const App = () => {
       name: newName,
       number: newNumber,
     };
-    if (persons.find((person) => person.name === nameObject.name)) {
-      return alert(`${newName} is already added to phonebook`);
-    }
+    //if (persons.find((person) => person.name === nameObject.name)) {
+    // return alert(`${newName} is already added to phonebook`);
+    //}
     personsService.create(nameObject).then((res) => {
       console.log(res);
       setPersons(persons.concat(nameObject));
