@@ -2,6 +2,7 @@ import { useState } from "react";
 import Filter from "./Filter";
 import Form from "./Form";
 import Number from "./Number";
+import personsService from "./services/personsServices";
 const App = () => {
   const [persons, setPersons] = useState([
     { name: "Arto Hellas", number: "040-123456", id: 1 },
@@ -19,6 +20,7 @@ const App = () => {
   const handleNumberChange = (event) => {
     setNewNumber(event.target.value);
   };
+
   const addName = (event) => {
     event.preventDefault();
     const nameObject = {
@@ -28,10 +30,14 @@ const App = () => {
     if (persons.find((person) => person.name === nameObject.name)) {
       return alert(`${newName} is already added to phonebook`);
     }
-    setPersons(persons.concat(nameObject));
-    setNewName("");
-    setNewNumber("");
+    personsService.create(nameObject).then((res) => {
+      console.log(res);
+      setPersons(persons.concat(nameObject));
+      setNewName("");
+      setNewNumber("");
+    });
   };
+
   const handleFilter = (event) => {
     setFilter(event.target.value);
   };
