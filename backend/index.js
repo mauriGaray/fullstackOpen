@@ -1,6 +1,6 @@
 const express = require("express");
 const app = express();
-
+app.use(express.urlencoded({ extended: true }));
 app.use(express.json());
 
 let persons = [
@@ -66,6 +66,20 @@ app.delete("/api/persons/:id", (req, res) => {
     res.status(404).send({ error: "Person not found" });
   }
 });
+//#######################
+app.post("/api/persons", (req, res) => {
+  const name = req.body.name;
+  const number = req.body.number;
+  const id = Math.floor(Math.random() * 1000000);
+  const newObject = {
+    id: id,
+    name: name,
+    number: number,
+  };
+  persons = [...persons, newObject];
+  res.status(200).send(`${newObject.name} has been added to the phonebook`);
+});
+
 //#######################
 app.listen(3000, () => {
   console.log("Server is listening on port 3000");
