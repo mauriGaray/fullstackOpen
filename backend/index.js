@@ -70,14 +70,18 @@ app.delete("/api/persons/:id", (req, res) => {
 app.post("/api/persons", (req, res) => {
   const name = req.body.name;
   const number = req.body.number;
-  const id = Math.floor(Math.random() * 1000000);
-  const newObject = {
-    id: id,
-    name: name,
-    number: number,
-  };
-  persons = [...persons, newObject];
-  res.status(200).send(`${newObject.name} has been added to the phonebook`);
+  if (!name || !number) {
+    res.status(404).send("You have to fill all the fields");
+  } else {
+    const id = Math.floor(Math.random() * 1000000);
+    const newObject = {
+      id: id,
+      name: name,
+      number: number,
+    };
+    persons = [...persons, newObject];
+    res.status(200).send(`${newObject.name} has been added to the phonebook`);
+  }
 });
 
 //#######################
