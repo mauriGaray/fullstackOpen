@@ -47,6 +47,40 @@ const App = () => {
       : persons.filter((person) =>
           person.name.toLowerCase().includes(filter.toLowerCase())
         );
+
+  const deletePerson = (person) => {
+    const confirmDeletion = window.confirm(
+      `Would you like to proceed with the deletion of ${person.name}?`
+    );
+
+    if (confirmDeletion) {
+      personsService
+        .deletePerson(person.id)
+        .then(() => {
+          displayNotification(
+            `${person.name} has been successfully deleted from the phone book`,
+            "successful"
+          );
+          setPersons(
+            persons.filter((entry) => {
+              return entry.id !== person.id;
+            })
+          );
+        })
+        .catch((err) => {
+          displayNotification(
+            `${person.name} has already been removed from the server`,
+            "unsuccessful"
+          );
+
+          setPersons(
+            persons.filter((entry) => {
+              return entry.id !== person.id;
+            })
+          );
+        });
+    }
+  };
   return (
     <div>
       <h1>Phonebook</h1>
@@ -62,7 +96,7 @@ const App = () => {
       />
 
       <h2>Numbers</h2>
-      <Number personsToShow={personsToShow} />
+      <Number personsToShow={personsToShow} deletePerson={deletePerson} />
     </div>
   );
 };
