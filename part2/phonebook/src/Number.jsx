@@ -1,16 +1,17 @@
 import React from "react";
-import personsServices from "./services/personsServices";
 
 const Number = (props) => {
   const { personsToShow, deletePerson } = props;
 
   return (
-    <div>
+    <div className="phonebook-list">
       {personsToShow.map((person) => {
         return (
-          <div key={person.name}>
+          <div key={person.id}>
             {person.name} {person.number}
-            <button onClick={() => deletePerson(person)}>Delete</button>
+            <button className="deleteBtn" onClick={() => deletePerson(person)}>
+              Delete
+            </button>
           </div>
         );
       })}

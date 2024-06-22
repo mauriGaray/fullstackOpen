@@ -5,7 +5,13 @@ const Filter = (props) => {
   return (
     <label htmlFor="filter">
       Filter shown with:{" "}
-      <input type="text" id="filter" value={value} onChange={onChange} />
+      <input
+        className="filter"
+        type="text"
+        id="filter"
+        value={value}
+        onChange={onChange}
+      />
     </label>
   );
 };

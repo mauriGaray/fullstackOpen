@@ -1,6 +1,6 @@
 import axios from "axios";
-const PORT = 3001;
-const BASE_URL = `http://localhost:${PORT}/persons`;
+const PORT = 3000;
+const baseUrl = `http://localhost:${PORT}/persons`;
 const getAll = () => {
   const request = axios.get(baseUrl);
   return request.then((res) => res.data);
@@ -14,10 +14,10 @@ const update = (id, newObject) => {
   return request.then((res) => res.data);
 };
 const deletePerson = (id) => {
-  const request = axios.delete(`${BASE_URL}/${id}`);
+  const request = axios.delete(`${baseUrl}/${id}`);
 
   return request.then((res) => {
-    return res.data;
+    return res;
   });
 };
 export default {
