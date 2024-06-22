@@ -3,7 +3,7 @@ const app = express();
 
 app.use(express.json());
 
-const persons = [
+let persons = [
   {
     id: 1,
     name: "Arto Hellas",
@@ -48,9 +48,25 @@ app.get("/info", (req, res) => {
 app.get("/api/persons/:id", (req, res) => {
   const id = req.params.id;
   const person = persons.find((person) => person.id === Number(id));
-  res.json(person);
+  if (person) {
+    res.json(person);
+  } else {
+    res.status(404).send({ error: "Person not found" });
+  }
 });
+//#######################
+app.delete("/api/persons/:id", (req, res) => {
+  const id = Number(req.params.id);
+  const initialLength = persons.length;
+  persons = persons.filter((person) => person.id !== id);
 
+  if (persons.length < initialLength) {
+    res.status(204).send(console.log(persons));
+  } else {
+    res.status(404).send({ error: "Person not found" });
+  }
+});
+//#######################
 app.listen(3000, () => {
   console.log("Server is listening on port 3000");
 });
