@@ -25,12 +25,16 @@ const persons = [
     number: "39-23-6423122",
   },
 ];
+
+//#######################
 app.get("/", (req, res) => {
   res.send("Hello world!");
 });
+//#######################
 app.get("/api/persons", (req, res) => {
   res.json(persons);
 });
+//#######################
 app.get("/info", (req, res) => {
   const date = new Date();
   res.send(
@@ -39,6 +43,12 @@ app.get("/info", (req, res) => {
       <p>${date.toDateString()}</p>
     </div>`
   );
+});
+//#######################
+app.get("/api/persons/:id", (req, res) => {
+  const id = req.params.id;
+  const person = persons.find((person) => person.id === Number(id));
+  res.json(person);
 });
 
 app.listen(3000, () => {
