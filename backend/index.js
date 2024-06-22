@@ -31,6 +31,15 @@ app.get("/", (req, res) => {
 app.get("/api/persons", (req, res) => {
   res.json(persons);
 });
+app.get("/info", (req, res) => {
+  const date = new Date();
+  res.send(
+    ` <div>
+      <p>Phonebook has info for ${persons.length} people</p>
+      <p>${date.toDateString()}</p>
+    </div>`
+  );
+});
 
 app.listen(3000, () => {
   console.log("Server is listening on port 3000");
