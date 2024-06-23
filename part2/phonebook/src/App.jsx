@@ -11,7 +11,7 @@ const App = () => {
   const [newNumber, setNewNumber] = useState("");
   useEffect(() => {
     personsService.getAll().then((res) => setPersons(res));
-  }, [persons]);
+  }, []);
 
   const handleNameChange = (event) => {
     setNewName(event.target.value);
