@@ -3,7 +3,6 @@ const app = express();
 const morgan = require("morgan");
 app.use(express.urlencoded({ extended: true }));
 app.use(express.json());
-app.use(morgan("tiny"));
 let persons = [
   {
     id: 1,
@@ -27,6 +26,23 @@ let persons = [
   },
 ];
 
+app.use((req, res, next) => {
+  if (
+    req.method === "POST" ||
+    req.method === "GET" ||
+    req.method === "DELETE" ||
+    req.method === "PATCH"
+  ) {
+    req.bodyContent = JSON.stringify(req.body);
+  }
+  next();
+});
+
+// Configurar Morgan con un formato personalizado que incluya los datos del cuerpo
+morgan.token("body", (req) => req.bodyContent || "");
+app.use(
+  morgan(":method :url :status :res[content-length] - :response-time ms :body")
+);
 //#######################
 app.get("/", (req, res) => {
   res.send("Hello world!");
