@@ -15,6 +15,7 @@ let persons = [
 ];
 
 // Configuración de middlewares
+app.use(express.static("dist"));
 app.use(cors());
 app.use(express.urlencoded({ extended: true }));
 app.use(express.json());
