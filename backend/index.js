@@ -2,6 +2,7 @@ const express = require("express");
 const app = express();
 require("dotenv").config();
 const morgan = require("morgan");
+const mongoose = require("mongoose");
 const cors = require("cors");
 const PersonsModel = require("./models/mongo");
 
@@ -34,8 +35,11 @@ app.get("/", (req, res) => {
 });
 
 // Obtener todos los contactos
-app.get("/api/persons", (req, res) => {
-  res.json(persons);
+app.get("/api/persons", async (req, res) => {
+  let result = await PersonsModel.find({})
+    .then((res) => res)
+    .catch((err) => `El error es: ${err}`);
+  res.send(result);
 });
 
 // Información de la agenda de teléfonos
@@ -51,26 +55,33 @@ app.get("/info", (req, res) => {
 
 // Obtener un contacto por ID
 app.get("/api/persons/:id", (req, res) => {
-  const id = Number(req.params.id);
-  const person = persons.find((person) => person.id === id);
-  if (person) {
-    res.json(person);
-  } else {
-    res.status(404).send({ error: "Person not found" });
+  const id = req.params.id;
+  if (!mongoose.Types.ObjectId.isValid(id)) {
+    return res.status(400).send("Invalid ID");
   }
+  PersonsModel.findById(id).then((result) => res.json(result));
 });
 
 // Eliminar un contacto por ID
 app.delete("/api/persons/:id", (req, res) => {
-  const id = Number(req.params.id);
-  const initialLength = persons.length;
-  persons = persons.filter((person) => person.id !== id);
+  const id = req.params.id;
 
-  if (persons.length < initialLength) {
-    res.status(204).send(console.log(persons));
-  } else {
-    res.status(404).send({ error: "Person not found" });
+  // Verificar si el ID es un ObjectId válido
+  if (!mongoose.Types.ObjectId.isValid(id)) {
+    return res.status(400).send("Invalid ID");
   }
+
+  PersonsModel.deleteOne({ _id: id })
+    .then((result) => {
+      if (result.deletedCount === 0) {
+        return res.status(404).send("Person not found");
+      }
+      res.status(200).send("Person deleted successfully");
+    })
+    .catch((err) => {
+      console.error(err);
+      res.status(500).send("Internal Server Error");
+    });
 });
 
 // Añadir un nuevo contacto

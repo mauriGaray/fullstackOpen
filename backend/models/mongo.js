@@ -12,13 +12,13 @@ mongoose
   .catch((err) => console.log(err));
 
 //Creación de Schema
-const PersonSchema = new mongoose.Schema({
+const personSchema = new mongoose.Schema({
   name: String,
   number: String,
   id: String,
 });
 
-PersonSchema.set("toJSON", {
+personSchema.set("toJSON", {
   transform: (document, returnedObject) => {
     returnedObject.id = returnedObject._id.toString();
     delete returnedObject._id;
@@ -26,4 +26,4 @@ PersonSchema.set("toJSON", {
   },
 });
 
-module.exports = mongoose.model("Persons", PersonSchema);
+module.exports = mongoose.model("Persons", personSchema);
