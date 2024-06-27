@@ -65,12 +65,10 @@ app.get("/api/persons/:id", (req, res) => {
 // Eliminar un contacto por ID
 app.delete("/api/persons/:id", (req, res) => {
   const id = req.params.id;
-
   // Verificar si el ID es un ObjectId válido
   if (!mongoose.Types.ObjectId.isValid(id)) {
     return res.status(400).send("Invalid ID");
   }
-
   PersonsModel.deleteOne({ _id: id })
     .then((result) => {
       if (result.deletedCount === 0) {
@@ -88,13 +86,16 @@ app.delete("/api/persons/:id", (req, res) => {
 app.post("/api/persons", (req, res) => {
   const { name, number } = req.body;
   if (!name || !number) {
-    res.status(400).send("You have to fill all the fields");
-  } else {
-    const id = Math.floor(Math.random() * 1000000);
-    const newPerson = { id, name, number };
-    persons = [...persons, newPerson];
-    res.status(200).send(`${newPerson.name} has been added to the phonebook`);
+    return res.status(400).json({ error: "content missing" });
   }
+
+  const person = new PersonsModel({ name: name, number: number });
+  person
+    .save()
+    .then((savedPerson) => {
+      res.json(savedPerson);
+    })
+    .catch((error) => res.send(error));
 });
 
 // Iniciar el servidor
