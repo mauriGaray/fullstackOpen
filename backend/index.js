@@ -5,6 +5,8 @@ const morgan = require("morgan");
 const mongoose = require("mongoose");
 const cors = require("cors");
 const PersonsModel = require("./models/mongo");
+const errorHandler = require("./middlewares/errorHandlers");
+const unknownEndpoint = require("./middlewares/unknownEndpoint");
 
 const PORT = process.env.PORT || 3000;
 
@@ -35,15 +37,14 @@ app.get("/", (req, res) => {
 });
 
 // Obtener todos los contactos
-app.get("/api/persons", async (req, res) => {
-  let result = await PersonsModel.find({})
-    .then((res) => res)
-    .catch((err) => `El error es: ${err}`);
-  res.send(result);
+app.get("/api/persons", async (req, res, next) => {
+  PersonsModel.find({})
+    .then((result) => res.send(result))
+    .catch((err) => next(err));
 });
 
 // Información de la agenda de teléfonos
-app.get("/info", (req, res) => {
+app.get("/info", (req, res, next) => {
   const date = new Date();
   res.send(
     `<div>
@@ -54,16 +55,18 @@ app.get("/info", (req, res) => {
 });
 
 // Obtener un contacto por ID
-app.get("/api/persons/:id", (req, res) => {
+app.get("/api/persons/:id", (req, res, next) => {
   const id = req.params.id;
   if (!mongoose.Types.ObjectId.isValid(id)) {
     return res.status(400).send("Invalid ID");
   }
-  PersonsModel.findById(id).then((result) => res.json(result));
+  PersonsModel.findById(id)
+    .then((result) => res.json(result))
+    .catch((err) => next(err));
 });
 
 // Eliminar un contacto por ID
-app.delete("/api/persons/:id", (req, res) => {
+app.delete("/api/persons/:id", (req, res, next) => {
   const id = req.params.id;
   // Verificar si el ID es un ObjectId válido
   if (!mongoose.Types.ObjectId.isValid(id)) {
@@ -76,17 +79,14 @@ app.delete("/api/persons/:id", (req, res) => {
       }
       res.status(200).send("Person deleted successfully");
     })
-    .catch((err) => {
-      console.error(err);
-      res.status(500).send("Internal Server Error");
-    });
+    .catch((err) => next(err));
 });
 
 // Añadir un nuevo contacto
-app.post("/api/persons", (req, res) => {
+app.post("/api/persons", (req, res, next) => {
   const { name, number } = req.body;
   if (!name || !number) {
-    return res.status(400).json({ error: "content missing" });
+    res.status(404).send({ error: "You have to fill all the fields" });
   }
 
   const person = new PersonsModel({ name: name, number: number });
@@ -95,8 +95,10 @@ app.post("/api/persons", (req, res) => {
     .then((savedPerson) => {
       res.json(savedPerson);
     })
-    .catch((error) => res.send(error));
+    .catch((err) => next(err));
 });
+app.use(unknownEndpoint);
+app.use(errorHandler);
 
 // Iniciar el servidor
 app.listen(PORT, () => {
